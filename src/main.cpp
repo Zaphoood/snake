@@ -1,20 +1,60 @@
+#include <locale.h>
+#include <chrono>
+#include <thread>
+#include <iostream>
+
 #include <ncurses.h>
+
+#include <snake.hpp>
+
+int FRAME_DELAY_MS = 100;
 
 int main(int argc, char ** argv)
 {
-    // init screen and sets up screen
-    initscr();
+  setlocale(LC_ALL, "");
+  
+  Snake snake = Snake(Point{10, 10}, Heading::RIGHT, 3);
 
-    // print to screen
-    printw("Hello World");
+  WINDOW* win = initscr();
+  raw();
+  // Don't wait for user input
+  nodelay(win, TRUE);
+  // Don't echo user input
+  noecho();
+  // Enable arrow keys etc.
+  keypad(stdscr, TRUE);
+  // Hide cursor
+  curs_set(0);
 
-    // refreshes the screen
-    refresh();
+  Point apple = {0, 0};
+  int i = 0;
+  int ch;
+  while (1) {
 
-    // pause the screen output
-    getch();
+    if ((ch = getch()) == 'q') {
+      break;
+    }
+    switch (ch) {
+      case 'w':
+        snake.set_heading(Heading::UP);
+        break;
+      case 'a':
+        snake.set_heading(Heading::LEFT);
+        break;
+      case 's':
+        snake.set_heading(Heading::DOWN);
+        break;
+      case 'd':
+        snake.set_heading(Heading::RIGHT);
+        break;
+    }
+    werase(win);
+    snake.draw();
+    snake.update(apple);
 
-    // deallocates memory and ends ncurses
-    endwin();
-    return 0;
+    std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_DELAY_MS));
+  }
+
+  endwin();
+  return 0;
 }
