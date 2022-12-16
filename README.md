@@ -6,8 +6,13 @@ Well, it does run in your terminal so I guess that's kinda cool.
 
 ## Installation
 
-You will need to install the ncurses library.
+You need `make` and `cmake` for compiling.
+On Ubuntu, install them with
+```bash
+sudo apt-get install build-essential cmake
+```
 
+You will also need to install the ncurses library.
 On Ubuntu, you can do this via
 ```bash
 sudo apt-get install libncurses5-dev libncursesw5-dev
