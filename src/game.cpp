@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <cwctype>
 #include <game.hpp>
 
@@ -8,17 +9,22 @@ char CORNER_TOPRIGHT[4]    = "┓";
 char CORNER_BOTTOMRIGHT[4] = "┛";
 char CORNER_BOTTOMLEFT[4]  = "┗";
 char APPLE[8]              = "🍎";
+// The apple emoji is two characters wide
+int APPLE_WIDTH = 2;
 
 Game::Game(Point draw_pos, Point size)
-  : snake(Snake(Point{10, 10}, Heading::RIGHT, 3)),
+  : snake(Snake(Point{5, 3}, Heading::RIGHT, 3)),
   draw_pos(draw_pos), size(size)
 {
-  apple = Point{0, 0};
+  inner_draw_pos = Point{draw_pos.x + 1, draw_pos.y + 1};
+  field_size = Point{size.x - 1, size.y - 1};
+  move_apple();
 }
 
 bool Game::update() {
   return handle_input();
 }
+
 bool Game::handle_input() {
   /* Handle user input.
    * 
@@ -44,15 +50,24 @@ bool Game::handle_input() {
         break;
     }
   }
-  snake.update(apple);
-  if (snake.check_collision(draw_pos.x + 1, draw_pos.x + size.x - 1, draw_pos.y + 1, draw_pos.y + size.y - 1)) {
+  ate_apple = false;
+  if (snake.update(apple, APPLE_WIDTH)) {
+    ate_apple = true;
+    move_apple();
+  }
+  if (snake.check_collision(field_size)) {
     return false;
   }
   return true;
 }
 
+void Game::move_apple() {
+  apple.x = rand() %  15; //(field_size.x - APPLE_WIDTH + 1);
+  apple.y = rand() % field_size.y;
+}
+
 void Game::draw(WINDOW* win) {
-    snake.draw(win);
+    snake.draw(win, Point{inner_draw_pos.x, inner_draw_pos.y});
     draw_outline(win);
     draw_apple(win);
 }
@@ -75,5 +90,5 @@ void Game::draw_outline(WINDOW* win) {
 }
 
 void Game::draw_apple(WINDOW* win) {
-  mvwprintw(win, apple.x, apple.y, "%s", APPLE);
+  mvwprintw(win, apple.y + inner_draw_pos.y, apple.x + inner_draw_pos.x, "%s", APPLE);
 }

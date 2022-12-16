@@ -6,6 +6,9 @@
 struct Point {
   int x;
   int y;
+  bool operator==(Point other) {
+    return x == other.x && y == other.y;
+  }
 };
 
 enum class Heading {
@@ -18,7 +21,6 @@ enum class Heading {
 class Snake {
   private:
     std::deque<Point> body;
-    Point head;
     // Direction the snake is going in
     Heading heading;
 
@@ -26,11 +28,12 @@ class Snake {
     void smove(bool grow);
 
   public:
+    Point head;
     Snake(Point start, Heading heading, int start_size);
 
-    bool update(Point apple);
-    bool check_collision(int left, int right, int top, int bottom);
+    bool update(Point apple, int apple_width);
+    bool check_collision(Point boundaries);
     Heading get_heading();
     void set_heading(Heading heading);
-    void draw(WINDOW* win);
+    void draw(WINDOW* win, Point offset);
 };

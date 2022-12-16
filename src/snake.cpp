@@ -14,10 +14,14 @@ Snake::Snake(Point start, Heading heading, int start_size) {
     }
 }
 
-bool Snake::update(Point apple) {
-  // TODO: Check if apple was eaten, if yes, return true
-  smove(false);
-  return false;
+bool Snake::update(Point apple, int apple_width) {
+  /* Move snake, check self and bounds collision and apple eating
+   * Apple width specifies the number of characters that the apple is wide
+   * Returns true if apple was eaten
+   */
+  bool ate = (apple.x <= head.x && head.x <= apple.x + apple_width - 1 && apple.y == head.y);
+  smove(ate);
+  return ate;
 }
 
 void Snake::smove(bool grow) {
@@ -41,8 +45,8 @@ void Snake::smove(bool grow) {
   }
 }
 
-bool Snake::check_collision(int left, int right, int top, int bottom) {
-  if (head.x < left || head.x >= right || head.y < top || head.y >= bottom) {
+bool Snake::check_collision(Point boundaries) {
+  if (head.x < 0 || head.x >= boundaries.x || head.y < 0 || head.y >= boundaries.y) {
     return true;
   }
   for (std::deque<Point>::iterator it = ++body.begin(); it != body.end(); ++it) {
@@ -63,11 +67,11 @@ void Snake::set_heading(Heading new_heading) {
   }
 }
 
-void Snake::draw(WINDOW* win) {
+void Snake::draw(WINDOW* win, Point offset) {
   int i = 0;
   for (Point it : body) {
     i++;
-    mvwprintw(win, it.y, it.x, "█");
+    mvwprintw(win, it.y + offset.y, it.x + offset.x, "█");
   }
 }
 
