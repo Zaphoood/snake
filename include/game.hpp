@@ -16,9 +16,12 @@ class Game {
     bool handle_input();
     void draw_outline(WINDOW* win);
     void draw_apple(WINDOW* win);
+    void draw_score(WINDOW* win);
     void move_apple();
 
     bool ate_apple = false;
+    long score = 0;
+
   public:
     Game(Point draw_pos, Point size);
 
