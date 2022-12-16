@@ -13,8 +13,13 @@ int main(int argc, char ** argv)
 {
   setlocale(LC_ALL, "");
   
-  Game game;
   WINDOW* win = initscr();
+  Point pos{0, 0};
+  Point size;
+  size.x = getmaxx(win) - 1;
+  size.y = getmaxy(win) - 1;
+
+  Game game(pos, size);
   raw();
   // Don't wait for user input
   nodelay(win, TRUE);

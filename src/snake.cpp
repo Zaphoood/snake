@@ -9,7 +9,7 @@ Snake::Snake(Point start, Heading heading, int start_size) {
     head = start;
     this->heading = heading;
     body.push_front(head);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < start_size; i++) {
       smove(true);
     }
 }
@@ -39,6 +39,18 @@ void Snake::smove(bool grow) {
   if (!grow) {
     body.pop_back();
   }
+}
+
+bool Snake::check_collision(int left, int right, int top, int bottom) {
+  if (head.x < left || head.x >= right || head.y < top || head.y >= bottom) {
+    return true;
+  }
+  for (std::deque<Point>::iterator it = ++body.begin(); it != body.end(); ++it) {
+    if (it->x == head.x && it->y == head.y) {
+      return true;
+    }
+  }
+  return false;
 }
 
 Heading Snake::get_heading() {
