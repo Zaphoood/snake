@@ -41,8 +41,11 @@ void Snake::smove(bool grow) {
   }
 }
 
+Heading Snake::get_heading() {
+  return heading;
+}
+
 void Snake::set_heading(Heading new_heading) {
-  return;
   if (((int) new_heading + 2) % 4 != (int) heading) {
     heading = new_heading;
   }

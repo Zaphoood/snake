@@ -26,6 +26,7 @@ class Snake {
     Snake(Point start, Heading heading, int start_size);
 
     bool update(Point apple);
+    Heading get_heading();
     void set_heading(Heading heading);
     void draw();
 };

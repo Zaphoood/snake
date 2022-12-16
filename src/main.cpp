@@ -29,26 +29,31 @@ int main(int argc, char ** argv)
   Point apple = {0, 0};
   int i = 0;
   int ch;
-  while (1) {
-
-    if ((ch = getch()) == 'q') {
-      break;
-    }
-    switch (ch) {
-      case 'w':
-        snake.set_heading(Heading::UP);
+  bool running = true;
+  while (running) {
+    // Handle input
+    while ((ch = getch()) != ERR) {
+      if (ch == 'q') {
+        running = false;
         break;
-      case 'a':
-        snake.set_heading(Heading::LEFT);
-        break;
-      case 's':
-        snake.set_heading(Heading::DOWN);
-        break;
-      case 'd':
-        snake.set_heading(Heading::RIGHT);
-        break;
+      }
+      switch (ch) {
+        case 'w':
+          snake.set_heading(Heading::UP);
+          break;
+        case 'a':
+          snake.set_heading(Heading::LEFT);
+          break;
+        case 's':
+          snake.set_heading(Heading::DOWN);
+          break;
+        case 'd':
+          snake.set_heading(Heading::RIGHT);
+          break;
+      }
     }
     werase(win);
+    mvprintw(0, 0, "%d", (int) snake.get_heading());
     snake.draw();
     snake.update(apple);
 
