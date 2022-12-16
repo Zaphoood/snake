@@ -19,7 +19,7 @@ Game::Game(Point draw_pos, Point size)
   draw_pos(draw_pos), size(size), score(0)
 {
   inner_draw_pos = Point{draw_pos.x + 1, draw_pos.y + 1};
-  field_size = Point{size.x - 1, size.y - 1};
+  field_size = Point{size.x - 2, size.y - 2};
   move_apple();
 }
 
@@ -72,7 +72,7 @@ void Game::move_apple() {
 }
 
 void Game::draw(WINDOW* win) {
-    snake.draw(win, Point{inner_draw_pos.x, inner_draw_pos.y});
+    snake.draw(win, inner_draw_pos);
     draw_outline(win);
     draw_apple(win);
     draw_score(win);
@@ -80,19 +80,19 @@ void Game::draw(WINDOW* win) {
 
 void Game::draw_outline(WINDOW* win) {
     // Draw outline
-    for (int x = 1; x <= size.x - 1; x++) {
+    for (int x = 1; x <= size.x - 2; x++) {
       mvwprintw(win, draw_pos.y, draw_pos.x + x, "%s", HORIZONTAL_LINE);
-      mvwprintw(win, draw_pos.y + size.y, draw_pos.x + x, "%s", HORIZONTAL_LINE);
+      mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x + x, "%s", HORIZONTAL_LINE);
     }
-    for (int y = 1; y <= size.y - 1; y++) {
+    for (int y = 1; y <= size.y - 2; y++) {
       mvwprintw(win, draw_pos.y + y, draw_pos.x, "%s", VERTICAL_LINE);
-      mvwprintw(win, draw_pos.y + y, draw_pos.x + size.x, "%s", VERTICAL_LINE);
+      mvwprintw(win, draw_pos.y + y, draw_pos.x + size.x - 1, "%s", VERTICAL_LINE);
     }
     // Corners
-    mvwprintw(win, draw_pos.y, draw_pos.x, "%s", CORNER_TOPLEFT);
-    mvwprintw(win, draw_pos.y + size.y, draw_pos.x, "%s", CORNER_BOTTOMLEFT);
-    mvwprintw(win, draw_pos.y, draw_pos.x + size.x, "%s", CORNER_TOPRIGHT);
-    mvwprintw(win, draw_pos.y + size.y, draw_pos.x + size.x, "%s", CORNER_BOTTOMRIGHT);
+    mvwprintw(win, draw_pos.y,              draw_pos.x, "%s", CORNER_TOPLEFT);
+    mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x, "%s", CORNER_BOTTOMLEFT);
+    mvwprintw(win, draw_pos.y,              draw_pos.x + size.x - 1, "%s", CORNER_TOPRIGHT);
+    mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x + size.x - 1, "%s", CORNER_BOTTOMRIGHT);
 }
 
 void Game::draw_apple(WINDOW* win) {
@@ -100,5 +100,5 @@ void Game::draw_apple(WINDOW* win) {
 }
 
 void Game::draw_score(WINDOW* win) {
-  mvwprintw(win, SCORE_POSTION.y, SCORE_POSTION.x, " Score: %ld ", score);
+  mvwprintw(win, draw_pos.y + SCORE_POSTION.y, draw_pos.x + SCORE_POSTION.x, " Score: %ld ", score);
 }

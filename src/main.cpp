@@ -8,6 +8,8 @@
 #include <game.hpp>
 
 int FRAME_DELAY_MS = 100;
+int MAX_WIDTH = 25;
+int MAX_HEIGHT = 15;
 
 int main(int argc, char ** argv)
 {
@@ -27,8 +29,21 @@ int main(int argc, char ** argv)
 
   Point pos{0, 0};
   Point size;
-  size.x = getmaxx(win) - 1;
-  size.y = getmaxy(win) - 1;
+  int actual_width = getmaxx(win);
+  int actual_height = getmaxy(win);
+  // Center playfield on screen in case screen is to wide/tall
+  if (actual_width > MAX_WIDTH) {
+    size.x = MAX_WIDTH;
+    pos.x = (actual_width - MAX_WIDTH) / 2;
+  } else {
+    size.x = actual_width;
+  }
+  if (actual_height > MAX_HEIGHT) {
+    size.y = MAX_HEIGHT;
+    pos.y = (actual_height - MAX_HEIGHT) / 2;
+  } else {
+    size.y = actual_height;
+  }
 
   Game game(pos, size);
 
