@@ -33,10 +33,38 @@ bool Game::handle_input() {
    * Return false if the game should quit.
    * */
   int ch;
+  steered_this_frame = false;
+  // Handle queued input from previous frame, if there is any
+  if (input_queue != -1) {
+    handle_steering(input_queue);
+    input_queue = -1;
+    steered_this_frame = true;
+  }
   while ((ch = getch()) != ERR) {
     if (ch == 'q') {
       return false;
     }
+    if (ch == 'w' || ch == 'a' || ch == 's' || ch == 'd') {
+      if (!steered_this_frame) {
+        handle_steering(ch);
+        steered_this_frame = true;
+      } else if (input_queue == -1) {
+          input_queue = ch;
+      }
+    }
+  }
+  ate_apple = false;
+  if (snake.update(apple, APPLE_WIDTH)) {
+    ate_apple = true;
+    score++;
+    move_apple();
+  }
+  if (snake.check_collision(field_size)) {
+    return false;
+  }
+  return true;
+}
+void Game::handle_steering(int ch) {
     switch (ch) {
       case 'w':
         snake.set_heading(Heading::UP);
@@ -51,17 +79,6 @@ bool Game::handle_input() {
         snake.set_heading(Heading::RIGHT);
         break;
     }
-  }
-  ate_apple = false;
-  if (snake.update(apple, APPLE_WIDTH)) {
-    ate_apple = true;
-    score++;
-    move_apple();
-  }
-  if (snake.check_collision(field_size)) {
-    return false;
-  }
-  return true;
 }
 
 void Game::move_apple() {
