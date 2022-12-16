@@ -45,6 +45,15 @@ void Snake::smove(bool grow) {
   }
 }
 
+bool Snake::intersects(Point point) {
+  for (std::deque<Point>::iterator it = body.begin(); it != body.end(); ++it) {
+    if (it->x == point.x && it->y == point.y) {
+      return true;
+    }
+  }
+  return false;
+}
+
 bool Snake::check_collision(Point boundaries) {
   if (head.x < 0 || head.x >= boundaries.x || head.y < 0 || head.y >= boundaries.y) {
     return true;

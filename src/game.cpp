@@ -65,8 +65,10 @@ bool Game::handle_input() {
 }
 
 void Game::move_apple() {
-  apple.x = rand() %  15; //(field_size.x - APPLE_WIDTH + 1);
-  apple.y = rand() % field_size.y;
+  do {
+    apple.x = rand() % (field_size.x - APPLE_WIDTH + 1);
+    apple.y = rand() % field_size.y;
+  } while (snake.intersects(apple));
 }
 
 void Game::draw(WINDOW* win) {

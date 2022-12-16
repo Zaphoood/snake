@@ -33,6 +33,7 @@ class Snake {
 
     bool update(Point apple, int apple_width);
     bool check_collision(Point boundaries);
+    bool intersects(Point p);
     Heading get_heading();
     void set_heading(Heading heading);
     void draw(WINDOW* win, Point offset);
