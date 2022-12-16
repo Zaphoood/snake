@@ -7,6 +7,7 @@ project(Snake)
 
 add_executable(snake
     src/main.cpp
+    src/game.cpp
     src/snake.cpp
 )
 

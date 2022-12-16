@@ -51,11 +51,11 @@ void Snake::set_heading(Heading new_heading) {
   }
 }
 
-void Snake::draw() {
+void Snake::draw(WINDOW* win) {
   int i = 0;
   for (Point it : body) {
     i++;
-    mvprintw(it.y, it.x, "█");
+    mvwprintw(win, it.y, it.x, "█");
   }
 }
 

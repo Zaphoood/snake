@@ -5,7 +5,7 @@
 
 #include <ncurses.h>
 
-#include <snake.hpp>
+#include <game.hpp>
 
 int FRAME_DELAY_MS = 100;
 
@@ -13,8 +13,7 @@ int main(int argc, char ** argv)
 {
   setlocale(LC_ALL, "");
   
-  Snake snake = Snake(Point{10, 10}, Heading::RIGHT, 3);
-
+  Game game;
   WINDOW* win = initscr();
   raw();
   // Don't wait for user input
@@ -26,37 +25,14 @@ int main(int argc, char ** argv)
   // Hide cursor
   curs_set(0);
 
-  Point apple = {0, 0};
-  int i = 0;
   int ch;
-  bool running = true;
-  while (running) {
-    // Handle input
-    while ((ch = getch()) != ERR) {
-      if (ch == 'q') {
-        running = false;
-        break;
-      }
-      switch (ch) {
-        case 'w':
-          snake.set_heading(Heading::UP);
-          break;
-        case 'a':
-          snake.set_heading(Heading::LEFT);
-          break;
-        case 's':
-          snake.set_heading(Heading::DOWN);
-          break;
-        case 'd':
-          snake.set_heading(Heading::RIGHT);
-          break;
-      }
+  while (1) {
+    if (!game.update()) {
+      break;
     }
     werase(win);
-    mvprintw(0, 0, "%d", (int) snake.get_heading());
-    snake.draw();
-    snake.update(apple);
-
+    game.draw(win);
+    wrefresh(win);
     std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_DELAY_MS));
   }
 

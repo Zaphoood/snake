@@ -1,6 +1,8 @@
 #include <cstdint>
 #include <deque>
 
+#include <ncurses.h>
+
 struct Point {
   int x;
   int y;
@@ -28,5 +30,5 @@ class Snake {
     bool update(Point apple);
     Heading get_heading();
     void set_heading(Heading heading);
-    void draw();
+    void draw(WINDOW* win);
 };
