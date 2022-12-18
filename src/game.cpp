@@ -15,13 +15,15 @@ char APPLE[8]              = "🍎";
 int APPLE_WIDTH = 2;
 
 Point SCORE_POSTION{2, 0};
+int SNAKE_START_SIZE = 3;
 
 Game::Game(Point draw_pos, Point size)
-  : snake(Snake(Point{5, 3}, Heading::RIGHT, 3)),
+  : snake(Point{0, 0}, Heading::RIGHT, 0),
   draw_pos(draw_pos), size(size), score(0)
 {
   inner_draw_pos = Point{draw_pos.x + 1, draw_pos.y + 1};
   field_size = Point{size.x - 2, size.y - 2};
+  snake.init(Point{field_size.x / 2 - SNAKE_START_SIZE, field_size.y / 2}, Heading::RIGHT, SNAKE_START_SIZE);
   move_apple();
 }
 
@@ -87,7 +89,7 @@ void Game::move_apple() {
   do {
     apple.x = rand() % (field_size.x - APPLE_WIDTH + 1);
     apple.y = rand() % field_size.y;
-  } while (snake.intersects(apple));
+  } while (snake.intersects_wide_char(apple));
 }
 
 void Game::draw(WINDOW* win) {

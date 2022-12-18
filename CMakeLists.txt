@@ -9,6 +9,7 @@ add_executable(snake
     src/main.cpp
     src/game.cpp
     src/snake.cpp
+    src/util.cpp
 )
 
 target_link_libraries(snake PUBLIC ncursesw)

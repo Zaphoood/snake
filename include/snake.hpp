@@ -5,13 +5,7 @@
 
 #include <ncurses.h>
 
-struct Point {
-  int x;
-  int y;
-  bool operator==(Point other) {
-    return x == other.x && y == other.y;
-  }
-};
+#include <util.hpp>
 
 enum class Heading {
   RIGHT = 0,
@@ -25,17 +19,19 @@ class Snake {
     std::deque<Point> body;
     // Direction the snake is going in
     Heading heading;
+    Point head;
 
     // Weird naming so that we don't shadow ncurses's `move`
     void smove(bool grow);
 
   public:
-    Point head;
     Snake(Point start, Heading heading, int start_size);
+    void init(Point start, Heading heading, int start_size);
 
     bool update(Point apple, int apple_width);
+    Point get_head();
     bool check_collision(Point boundaries);
-    bool intersects(Point p);
+    bool intersects_wide_char(Point p);
     Heading get_heading();
     void set_heading(Heading heading);
     void draw(WINDOW* win, Point offset);

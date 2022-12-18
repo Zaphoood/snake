@@ -7,8 +7,13 @@
 #include <color.hpp>
 
 Snake::Snake(Point start, Heading heading, int start_size) {
+  init(start, heading, start_size);
+}
+
+void Snake::init(Point start, Heading heading, int start_size) {
     head = start;
     this->heading = heading;
+    body.clear();
     body.push_front(head);
     for (int i = 0; i < start_size; i++) {
       smove(true);
@@ -23,6 +28,10 @@ bool Snake::update(Point apple, int apple_width) {
   bool ate = (apple.x <= head.x && head.x <= apple.x + apple_width - 1 && apple.y == head.y);
   smove(ate);
   return ate;
+}
+
+Point Snake::get_head() {
+  return head;
 }
 
 void Snake::smove(bool grow) {
@@ -46,9 +55,9 @@ void Snake::smove(bool grow) {
   }
 }
 
-bool Snake::intersects(Point point) {
+bool Snake::intersects_wide_char(Point point) {
   for (std::deque<Point>::iterator it = body.begin(); it != body.end(); ++it) {
-    if (it->x == point.x && it->y == point.y) {
+    if (util::intersects_wide_char(*it, point)) {
       return true;
     }
   }
