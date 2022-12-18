@@ -3,6 +3,7 @@
 #include <ncurses.h>
 
 #include <snake.hpp>
+#include <string>
 
 class Game {
   private:
@@ -10,7 +11,9 @@ class Game {
     int input_queue = -1;
     bool steered_this_frame;
     Snake snake;
-    Point apple;
+    Point fruit;
+    int fruit_index;
+    std::string fruit_str;
 
     Point draw_pos;
     Point size;
@@ -21,11 +24,11 @@ class Game {
     bool handle_input();
     void handle_steering(int ch);
     void draw_outline(WINDOW* win);
-    void draw_apple(WINDOW* win);
+    void draw_fruit(WINDOW* win);
     void draw_score(WINDOW* win);
-    void move_apple();
+    void move_fruit();
 
-    bool ate_apple = false;
+    bool ate_fruit = false;
     long score = 0;
 
   public:

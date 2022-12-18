@@ -1,3 +1,4 @@
+#include <array>
 #include <cstdlib>
 #include <cwctype>
 
@@ -10,9 +11,10 @@ char CORNER_TOPLEFT[4]     = "┏";
 char CORNER_TOPRIGHT[4]    = "┓";
 char CORNER_BOTTOMRIGHT[4] = "┛";
 char CORNER_BOTTOMLEFT[4]  = "┗";
-char APPLE[8]              = "🍎";
-// The apple emoji is two characters wide
-int APPLE_WIDTH = 2;
+std::array<std::string, 13> FRUITS = {
+  "🍎", "🥝", "🥥", "🍒", "🥭", "🍑", "🍋",
+  "🍊", "🍉", "🍇", "🍌", "🍏", "🍐"
+};
 
 Point SCORE_POSTION{2, 0};
 int SNAKE_START_SIZE = 3;
@@ -24,7 +26,7 @@ Game::Game(Point draw_pos, Point size)
   inner_draw_pos = Point{draw_pos.x + 1, draw_pos.y + 1};
   field_size = Point{size.x - 2, size.y - 2};
   snake.init(Point{field_size.x / 2 - SNAKE_START_SIZE, field_size.y / 2}, Heading::RIGHT, SNAKE_START_SIZE);
-  move_apple();
+  move_fruit();
 }
 
 bool Game::update() {
@@ -57,11 +59,11 @@ bool Game::handle_input() {
       }
     }
   }
-  ate_apple = false;
-  if (snake.update(apple, APPLE_WIDTH)) {
-    ate_apple = true;
+  ate_fruit = false;
+  if (snake.update(fruit)) {
+    ate_fruit = true;
     score++;
-    move_apple();
+    move_fruit();
   }
   if (snake.check_collision(field_size)) {
     return false;
@@ -85,18 +87,21 @@ void Game::handle_steering(int ch) {
     }
 }
 
-void Game::move_apple() {
+void Game::move_fruit() {
+  // Move fruit
   do {
-    apple.x = rand() % (field_size.x - APPLE_WIDTH + 1);
-    apple.y = rand() % field_size.y;
-  } while (snake.intersects_wide_char(apple));
+    fruit.x = rand() % (field_size.x - 1); // -1 because fruits are emojis and therefore wide chars
+    fruit.y = rand() % field_size.y;
+  } while (snake.intersects_wide_char(fruit));
+  // TODO: Select new fruit
+  fruit_str = FRUITS[random() % FRUITS.size()];
 }
 
 void Game::draw(WINDOW* win) {
   snake.draw(win, inner_draw_pos);
   attron(COLOR_PAIR(COLOR_DEFAULT));
   draw_outline(win);
-  draw_apple(win);
+  draw_fruit(win);
   draw_score(win);
   attroff(COLOR_PAIR(COLOR_DEFAULT));
 }
@@ -118,8 +123,8 @@ void Game::draw_outline(WINDOW* win) {
     mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x + size.x - 1, "%s", CORNER_BOTTOMRIGHT);
 }
 
-void Game::draw_apple(WINDOW* win) {
-  mvwprintw(win, apple.y + inner_draw_pos.y, apple.x + inner_draw_pos.x, "%s", APPLE);
+void Game::draw_fruit(WINDOW* win) {
+  mvwprintw(win, fruit.y + inner_draw_pos.y, fruit.x + inner_draw_pos.x, "%s", fruit_str.c_str());
 }
 
 void Game::draw_score(WINDOW* win) {

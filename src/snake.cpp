@@ -20,12 +20,12 @@ void Snake::init(Point start, Heading heading, int start_size) {
     }
 }
 
-bool Snake::update(Point apple, int apple_width) {
-  /* Move snake, check self and bounds collision and apple eating
-   * Apple width specifies the number of characters that the apple is wide
-   * Returns true if apple was eaten
+bool Snake::update(Point fruit) {
+  /* Move snake, check self and bounds collision and fruit eating
+   * Apple width specifies the number of characters that the fruit is wide
+   * Returns true if fruit was eaten
    */
-  bool ate = (apple.x <= head.x && head.x <= apple.x + apple_width - 1 && apple.y == head.y);
+  bool ate = util::intersects_wide_char(head, fruit);
   smove(ate);
   return ate;
 }

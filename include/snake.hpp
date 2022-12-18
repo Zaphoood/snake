@@ -28,7 +28,7 @@ class Snake {
     Snake(Point start, Heading heading, int start_size);
     void init(Point start, Heading heading, int start_size);
 
-    bool update(Point apple, int apple_width);
+    bool update(Point fruit);
     Point get_head();
     bool check_collision(Point boundaries);
     bool intersects_wide_char(Point p);
