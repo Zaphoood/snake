@@ -6,6 +6,7 @@
 #include <ncurses.h>
 
 #include <game.hpp>
+#include <color.hpp>
 
 int FRAME_DELAY_MS = 100;
 int MAX_WIDTH = 25;
@@ -26,6 +27,18 @@ int main(int argc, char ** argv)
   keypad(stdscr, TRUE);
   // Hide cursor
   curs_set(0);
+  // Set up color
+  if (!has_colors()) {
+    endwin();
+    std::cout << "Your terminal doesn't support color :(\n";
+    return 0;
+  }
+  start_color();
+  // Use the terminal's default colors when -1 is specified
+  use_default_colors();
+  init_pair(COLOR_DEFAULT, COLOR_WHITE, -1);
+  init_pair(COLOR_SNAKE, COLOR_GREEN, COLOR_BLUE);
+  wbkgd(win, COLOR_PAIR(COLOR_DEFAULT));
 
   Point pos{0, 0};
   Point size;

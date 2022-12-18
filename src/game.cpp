@@ -1,6 +1,8 @@
 #include <cstdlib>
 #include <cwctype>
+
 #include <game.hpp>
+#include <color.hpp>
 
 char HORIZONTAL_LINE[4]    = "━";
 char VERTICAL_LINE[4]      = "┃";
@@ -89,10 +91,12 @@ void Game::move_apple() {
 }
 
 void Game::draw(WINDOW* win) {
-    snake.draw(win, inner_draw_pos);
-    draw_outline(win);
-    draw_apple(win);
-    draw_score(win);
+  snake.draw(win, inner_draw_pos);
+  attron(COLOR_PAIR(COLOR_DEFAULT));
+  draw_outline(win);
+  draw_apple(win);
+  draw_score(win);
+  attroff(COLOR_PAIR(COLOR_DEFAULT));
 }
 
 void Game::draw_outline(WINDOW* win) {

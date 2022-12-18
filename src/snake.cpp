@@ -4,6 +4,7 @@
 #include <ncurses.h>
 
 #include <snake.hpp>
+#include <color.hpp>
 
 Snake::Snake(Point start, Heading heading, int start_size) {
     head = start;
@@ -71,16 +72,19 @@ Heading Snake::get_heading() {
 }
 
 void Snake::set_heading(Heading new_heading) {
+  // Check that new heading is not opposite of current heading
   if (((int) new_heading + 2) % 4 != (int) heading) {
     heading = new_heading;
   }
 }
 
 void Snake::draw(WINDOW* win, Point offset) {
+  attron(COLOR_PAIR(COLOR_SNAKE));
   int i = 0;
   for (Point it : body) {
     i++;
     mvwprintw(win, it.y + offset.y, it.x + offset.x, "█");
   }
+  attroff(COLOR_PAIR(COLOR_SNAKE));
 }
 
