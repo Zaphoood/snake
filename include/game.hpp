@@ -23,17 +23,27 @@ class Game {
     bool running = false;
     bool handle_input();
     void handle_steering(int ch);
-    void draw_outline(WINDOW* win);
     void draw_fruit(WINDOW* win);
     void draw_score(WINDOW* win);
+    void draw_game_over(WINDOW* win);
+    // Draw an outline with predetermined characters
+    void box(WINDOW* win, Point position, Point size);
+    // Fill a rect with the given character
+    void fill_box(WINDOW* win, Point position, Point size, char ch);
     void move_fruit();
+    void reset();
 
     bool ate_fruit = false;
     long score = 0;
+    bool game_over = false;
 
   public:
     Game(Point draw_pos, Point size);
 
+    /* Update the game's state.
+     *
+     * Return false if the game was quit.
+     */
     bool update();
     void draw(WINDOW* win);
 };

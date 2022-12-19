@@ -15,6 +15,7 @@ std::array<std::string, 13> FRUITS = {
   "🍎", "🥝", "🥥", "🍒", "🥭", "🍑", "🍋",
   "🍊", "🍉", "🍇", "🍌", "🍏", "🍐"
 };
+std::string GAME_OVER = "Game Over!";
 
 Point SCORE_POSTION{2, 0};
 int SNAKE_START_SIZE = 3;
@@ -25,12 +26,30 @@ Game::Game(Point draw_pos, Point size)
 {
   inner_draw_pos = Point{draw_pos.x + 1, draw_pos.y + 1};
   field_size = Point{size.x - 2, size.y - 2};
-  snake.init(Point{field_size.x / 2 - SNAKE_START_SIZE, field_size.y / 2}, Heading::RIGHT, SNAKE_START_SIZE);
-  move_fruit();
+  reset();
 }
 
+/* Update the game's state.
+ *
+ * Return false if the game was quit.
+ */
 bool Game::update() {
-  return handle_input();
+  if (!handle_input()) {
+    return false;
+  }
+  if (game_over) {
+    return true;
+  }
+  ate_fruit = false;
+  if (snake.update(fruit)) {
+    ate_fruit = true;
+    score++;
+    move_fruit();
+  }
+  if (snake.check_collision(field_size)) {
+    game_over = true;
+  }
+  return true;
 }
 
 bool Game::handle_input() {
@@ -50,6 +69,10 @@ bool Game::handle_input() {
     if (ch == 'q') {
       return false;
     }
+    if (game_over) {
+      reset();
+      return true;
+    }
     if (ch == 'w' || ch == 'a' || ch == 's' || ch == 'd') {
       if (!steered_this_frame) {
         handle_steering(ch);
@@ -59,17 +82,9 @@ bool Game::handle_input() {
       }
     }
   }
-  ate_fruit = false;
-  if (snake.update(fruit)) {
-    ate_fruit = true;
-    score++;
-    move_fruit();
-  }
-  if (snake.check_collision(field_size)) {
-    return false;
-  }
   return true;
 }
+
 void Game::handle_steering(int ch) {
     switch (ch) {
       case 'w':
@@ -87,6 +102,13 @@ void Game::handle_steering(int ch) {
     }
 }
 
+void Game::reset() {
+  game_over = false;
+  score = 0;
+  snake.init(Point{field_size.x / 2 - SNAKE_START_SIZE, field_size.y / 2}, Heading::RIGHT, SNAKE_START_SIZE);
+  move_fruit();
+}
+
 void Game::move_fruit() {
   // Move fruit
   do {
@@ -100,27 +122,36 @@ void Game::move_fruit() {
 void Game::draw(WINDOW* win) {
   snake.draw(win, inner_draw_pos);
   attron(COLOR_PAIR(COLOR_DEFAULT));
-  draw_outline(win);
+  box(win, draw_pos, size);
   draw_fruit(win);
   draw_score(win);
+  if (game_over) {
+    draw_game_over(win);
+  }
   attroff(COLOR_PAIR(COLOR_DEFAULT));
 }
 
-void Game::draw_outline(WINDOW* win) {
-    // Draw outline
+void Game::box(WINDOW* win, Point position, Point size) {
     for (int x = 1; x <= size.x - 2; x++) {
-      mvwprintw(win, draw_pos.y, draw_pos.x + x, "%s", HORIZONTAL_LINE);
-      mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x + x, "%s", HORIZONTAL_LINE);
+      mvwprintw(win, position.y, position.x + x, "%s", HORIZONTAL_LINE);
+      mvwprintw(win, position.y + size.y - 1, position.x + x, "%s", HORIZONTAL_LINE);
     }
     for (int y = 1; y <= size.y - 2; y++) {
-      mvwprintw(win, draw_pos.y + y, draw_pos.x, "%s", VERTICAL_LINE);
-      mvwprintw(win, draw_pos.y + y, draw_pos.x + size.x - 1, "%s", VERTICAL_LINE);
+      mvwprintw(win, position.y + y, position.x, "%s", VERTICAL_LINE);
+      mvwprintw(win, position.y + y, position.x + size.x - 1, "%s", VERTICAL_LINE);
     }
     // Corners
-    mvwprintw(win, draw_pos.y,              draw_pos.x, "%s", CORNER_TOPLEFT);
-    mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x, "%s", CORNER_BOTTOMLEFT);
-    mvwprintw(win, draw_pos.y,              draw_pos.x + size.x - 1, "%s", CORNER_TOPRIGHT);
-    mvwprintw(win, draw_pos.y + size.y - 1, draw_pos.x + size.x - 1, "%s", CORNER_BOTTOMRIGHT);
+    mvwprintw(win, position.y,              position.x, "%s", CORNER_TOPLEFT);
+    mvwprintw(win, position.y + size.y - 1, position.x, "%s", CORNER_BOTTOMLEFT);
+    mvwprintw(win, position.y,              position.x + size.x - 1, "%s", CORNER_TOPRIGHT);
+    mvwprintw(win, position.y + size.y - 1, position.x + size.x - 1, "%s", CORNER_BOTTOMRIGHT);
+}
+void Game::fill_box(WINDOW* win, Point position, Point size, char ch) {
+  for (int x = position.x; x < position.x + size.x; x++) {
+    for (int y = position.y; y < position.y + size.y; y++) {
+      mvwprintw(win, y, x, "%c", ch);
+    }
+  }
 }
 
 void Game::draw_fruit(WINDOW* win) {
@@ -129,4 +160,15 @@ void Game::draw_fruit(WINDOW* win) {
 
 void Game::draw_score(WINDOW* win) {
   mvwprintw(win, draw_pos.y + SCORE_POSTION.y, draw_pos.x + SCORE_POSTION.x, " Score: %ld ", score);
+}
+
+void Game::draw_game_over(WINDOW* win) {
+  Point text_pos{
+      draw_pos.x + (size.x - (int) GAME_OVER.size()) / 2,
+      draw_pos.y + size.y / 2};
+  Point box_pos{text_pos.x - 2, text_pos.y - 1};
+  Point box_size{(int) GAME_OVER.size() + 4, 3};
+  fill_box(win, box_pos, box_size, ' ');
+  box(win, box_pos, box_size);
+  mvwprintw(win, text_pos.y, text_pos.x, "%s", GAME_OVER.c_str());
 }
