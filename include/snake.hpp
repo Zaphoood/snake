@@ -17,12 +17,15 @@ enum class Heading {
 class Snake {
   private:
     std::deque<Point> body;
-    // Direction the snake is going in
+    /* Direction the snake is going in */
     Heading heading;
     Point head;
+    Point old_tail;
 
     // Weird naming so that we don't shadow ncurses's `move`
     void smove(bool grow);
+
+    void draw_fractional_block(WINDOW* win, Point position, Heading direction, int frac);
 
   public:
     Snake(Point start, Heading heading, int start_size);

@@ -24,8 +24,8 @@ Game::Game(Point draw_pos, Point size)
   : snake(Point{0, 0}, Heading::RIGHT, 0),
   draw_pos(draw_pos), size(size), score(0)
 {
-  inner_draw_pos = Point{draw_pos.x + 1, draw_pos.y + 1};
-  field_size = Point{size.x - 2, size.y - 2};
+  inner_draw_pos = draw_pos + Point{1, 1};
+  field_size = size - Point{2, 2};
   reset();
 }
 

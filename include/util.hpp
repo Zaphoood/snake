@@ -6,6 +6,12 @@ struct Point {
   bool operator==(Point other) {
     return x == other.x && y == other.y;
   }
+  Point operator+(Point other) {
+    return Point{x + other.x, y + other.y};
+  }
+  Point operator-(Point other) {
+    return Point{x - other.x, y - other.y};
+  }
 };
 
 namespace util {
