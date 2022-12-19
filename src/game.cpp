@@ -5,20 +5,20 @@
 #include <game.hpp>
 #include <color.hpp>
 
-char HORIZONTAL_LINE[4]    = "━";
-char VERTICAL_LINE[4]      = "┃";
-char CORNER_TOPLEFT[4]     = "┏";
-char CORNER_TOPRIGHT[4]    = "┓";
-char CORNER_BOTTOMRIGHT[4] = "┛";
-char CORNER_BOTTOMLEFT[4]  = "┗";
-std::array<std::string, 13> FRUITS = {
+const char HORIZONTAL_LINE[4]    = "━";
+const char VERTICAL_LINE[4]      = "┃";
+const char CORNER_TOPLEFT[4]     = "┏";
+const char CORNER_TOPRIGHT[4]    = "┓";
+const char CORNER_BOTTOMRIGHT[4] = "┛";
+const char CORNER_BOTTOMLEFT[4]  = "┗";
+const std::array<std::string, 13> FRUITS = {
   "🍎", "🥝", "🥥", "🍒", "🥭", "🍑", "🍋",
   "🍊", "🍉", "🍇", "🍌", "🍏", "🍐"
 };
-std::string GAME_OVER = "Game Over!";
+const std::string GAME_OVER = "Game Over!";
 
-Point SCORE_POSTION{2, 0};
-int SNAKE_START_SIZE = 3;
+const Point SCORE_POSTION{2, 0};
+const int SNAKE_START_SIZE = 3;
 
 Game::Game(Point draw_pos, Point size)
   : snake(Point{0, 0}, Heading::RIGHT, 0),
@@ -33,7 +33,7 @@ Game::Game(Point draw_pos, Point size)
  *
  * Return false if the game was quit.
  */
-bool Game::update() {
+bool Game::tick() {
   if (!handle_input()) {
     return false;
   }
@@ -41,7 +41,7 @@ bool Game::update() {
     return true;
   }
   ate_fruit = false;
-  if (snake.update(fruit)) {
+  if (snake.tick(fruit)) {
     ate_fruit = true;
     score++;
     move_fruit();
@@ -119,8 +119,8 @@ void Game::move_fruit() {
   fruit_str = FRUITS[random() % FRUITS.size()];
 }
 
-void Game::draw(WINDOW* win) {
-  snake.draw(win, inner_draw_pos);
+void Game::draw(WINDOW* win, int subframe) {
+  snake.draw(win, inner_draw_pos, game_over ? 0 : subframe);
   attron(COLOR_PAIR(COLOR_DEFAULT));
   box(win, draw_pos, size);
   draw_fruit(win);

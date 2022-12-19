@@ -8,7 +8,11 @@
 #include <game.hpp>
 #include <color.hpp>
 
-int FRAME_DELAY_MS = 100;
+/* Duration of one tick */
+int TICK_DELAY_MS = 100;
+/* Number of subframes per tick. */
+int N_SUBFRAMES = 8;
+int SUBFRAME_DELAY_MS = TICK_DELAY_MS / N_SUBFRAMES;
 int MAX_WIDTH = 25;
 int MAX_HEIGHT = 15;
 
@@ -36,8 +40,10 @@ int main(int argc, char ** argv)
   start_color();
   // Use the terminal's default colors when -1 is specified
   use_default_colors();
-  init_pair(COLOR_DEFAULT, COLOR_WHITE, -1);
-  init_pair(COLOR_SNAKE, COLOR_GREEN, COLOR_BLUE);
+  short BACKGROUND = 256 - 22;
+  init_pair(COLOR_DEFAULT, COLOR_WHITE, BACKGROUND);
+  init_pair(COLOR_SNAKE, COLOR_GREEN, BACKGROUND);
+  init_pair(COLOR_SNAKE_INV, BACKGROUND, COLOR_GREEN);
   wbkgd(win, COLOR_PAIR(COLOR_DEFAULT));
 
   Point pos{0, 0};
@@ -62,13 +68,15 @@ int main(int argc, char ** argv)
 
   int ch;
   while (1) {
-    if (!game.update()) {
+    if (!game.tick()) {
       break;
     }
-    werase(win);
-    game.draw(win);
-    wrefresh(win);
-    std::this_thread::sleep_for(std::chrono::milliseconds(FRAME_DELAY_MS));
+    for (int subframe = 0; subframe < N_SUBFRAMES; subframe++) {
+      werase(win);
+      game.draw(win, subframe);
+      wrefresh(win);
+      std::this_thread::sleep_for(std::chrono::milliseconds(SUBFRAME_DELAY_MS));
+    }
   }
 
   endwin();

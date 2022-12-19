@@ -44,6 +44,6 @@ class Game {
      *
      * Return false if the game was quit.
      */
-    bool update();
-    void draw(WINDOW* win);
+    bool tick();
+    void draw(WINDOW* win, int subframe);
 };
