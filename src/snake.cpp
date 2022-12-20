@@ -1,33 +1,10 @@
 #include <array>
-#include <vector>
-#include <iostream>
-#include <map>
+#include <string>
 
 #include <ncurses.h>
 
 #include <snake.hpp>
 #include <color.hpp>
-
-const char BLOCK_FULL[4] = "█";
-const int N_BLOCKS = 8;
-const std::array<std::array<std::string, N_BLOCKS>, 2> BLOCKS = {{
-  {" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"},
-  {" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇"}
-}};
-/* Map each heading to an index of the BLOCKS array */
-const std::map<Heading, int> HEADING_BLOCK = {
-  {Heading::RIGHT, 0},
-  {Heading::UP,    1},
-  {Heading::LEFT,  0},
-  {Heading::DOWN,  1},
-};
-/* For which headings to invert the last element of the body */
-const std::map<Heading, bool> HEADING_INVERT = {
-  {Heading::RIGHT, false},
-  {Heading::UP,    false},
-  {Heading::LEFT,  true},
-  {Heading::DOWN,  true},
-};
 
 
 Snake::Snake(Point start, Heading heading, int start_size) {
@@ -135,7 +112,13 @@ void Snake::draw(WINDOW* win, Point offset, int subframe) {
     } else if (tail_offset.x < 0) {
       tail_heading = Heading::RIGHT;
     }
-    draw_fractional_block(win, offset + old_tail, tail_heading, N_BLOCKS - subframe);
+    if (subframe == 0) {
+      attron(COLOR_PAIR(COLOR_SNAKE));
+      mvwprintw(win, offset.y + old_tail.y, offset.x + old_tail.x, BLOCK_FULL);
+      attroff(COLOR_PAIR(COLOR_SNAKE));
+    } else {
+      draw_fractional_block(win, offset + old_tail, tail_heading, N_BLOCKS - subframe);
+    }
   }
 }
 
@@ -146,12 +129,18 @@ void Snake::draw_fractional_block(WINDOW* win, Point position, Heading direction
   switch (direction) {
     case Heading::RIGHT:
     case Heading::UP:
-      block_index = std::min(N_BLOCKS - 1, frac);
+      //block_index = std::min(N_BLOCKS - 1, frac);
+      block_index = frac;
       break;
     case Heading::DOWN:
     case Heading::LEFT:
-      block_index = std::max(0, N_BLOCKS - frac - 1);
+      //block_index = std::max(0, N_BLOCKS - frac - 1);
+      block_index = N_BLOCKS - frac;
       break;
+  }
+  if (frac < 0 || frac >= N_BLOCKS) {
+    mvwprintw(win, 0, 0, "%d", frac);
+    return;
   }
   block_index = std::max(std::min((int) N_BLOCKS - 1, block_index), 0);
   attron(COLOR_PAIR(color));

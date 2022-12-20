@@ -11,7 +11,7 @@
 /* Duration of one tick */
 int TICK_DELAY_MS = 100;
 /* Number of subframes per tick. */
-int N_SUBFRAMES = 8;
+int N_SUBFRAMES = N_BLOCKS;
 int SUBFRAME_DELAY_MS = TICK_DELAY_MS / N_SUBFRAMES;
 int MAX_WIDTH = 30;
 int MAX_HEIGHT = 15;

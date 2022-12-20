@@ -1,6 +1,8 @@
 #pragma once
 
-#include <cstdint>
+#include <array>
+#include <map>
+#include <string>
 #include <deque>
 
 #include <ncurses.h>
@@ -14,6 +16,27 @@ enum class Heading {
   DOWN  = 3,
 };
 
+const char BLOCK_FULL[4] = "█";
+const int N_BLOCKS = 8;
+const std::array<std::array<std::string, N_BLOCKS>, 2> BLOCKS = {{
+  {" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"},
+  {" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇"}
+}};
+/* Map each heading to an index of the BLOCKS array */
+const std::map<Heading, int> HEADING_BLOCK = {
+  {Heading::RIGHT, 0},
+  {Heading::UP,    1},
+  {Heading::LEFT,  0},
+  {Heading::DOWN,  1},
+};
+
+/* For which headings to invert the last element of the body */
+const std::map<Heading, bool> HEADING_INVERT = {
+  {Heading::RIGHT, false},
+  {Heading::UP,    false},
+  {Heading::LEFT,  true},
+  {Heading::DOWN,  true},
+};
 class Snake {
   private:
     std::deque<Point> body;
