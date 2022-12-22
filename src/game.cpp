@@ -11,9 +11,8 @@ const char CORNER_TOPLEFT[4]     = "┏";
 const char CORNER_TOPRIGHT[4]    = "┓";
 const char CORNER_BOTTOMRIGHT[4] = "┛";
 const char CORNER_BOTTOMLEFT[4]  = "┗";
-const std::array<std::string, 13> FRUITS = {
-  "🍎", "🥝", "🥥", "🍒", "🥭", "🍑", "🍋",
-  "🍊", "🍉", "🍇", "🍌", "🍏", "🍐"
+const std::array<std::string, 4> FRUITS = {
+  "🎄", "🍪", "🍭", "🎁",
 };
 const std::string GAME_OVER = "Game Over!";
 

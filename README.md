@@ -1,8 +1,6 @@
 # Snake 🐍
 
-It's just snake. What did you expect?
-
-Well, it does run in your terminal so I guess that's kinda cool.
+It's just snake.
 
 ## Installation
 
