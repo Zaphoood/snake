@@ -66,6 +66,7 @@ int main(int argc, char ** argv)
 
   Game game(pos, size);
 
+  // TODO: Remove unused variable
   int ch;
   while (1) {
     if (!game.tick()) {
