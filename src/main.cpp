@@ -1,12 +1,12 @@
-#include <locale.h>
 #include <chrono>
-#include <thread>
 #include <iostream>
+#include <locale.h>
+#include <thread>
 
 #include <ncurses.h>
 
-#include <game.hpp>
 #include <color.hpp>
+#include <game.hpp>
 
 /* Duration of one tick */
 int TICK_DELAY_MS = 100;
@@ -16,12 +16,11 @@ int SUBFRAME_DELAY_MS = TICK_DELAY_MS / N_SUBFRAMES;
 int MAX_WIDTH = 30;
 int MAX_HEIGHT = 15;
 
-int main(int argc, char ** argv)
-{
+int main(int argc, char **argv) {
   setlocale(LC_ALL, "");
-  srand((unsigned) time(NULL));
-  
-  WINDOW* win = initscr();
+  srand((unsigned)time(NULL));
+
+  WINDOW *win = initscr();
   raw();
   // Don't wait for user input
   nodelay(win, TRUE);
